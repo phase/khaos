@@ -1,0 +1,5 @@
+name: Khaos
+version: 0.0.0
+main: xyz.jadonfowler.khaos.Khaos
+author: Phase <https://github.com/phase>
+description: Minigame API
