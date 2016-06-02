@@ -11,6 +11,7 @@ import xyz.jadonfowler.khaos.game.Arena;
 import xyz.jadonfowler.khaos.game.Game;
 import xyz.jadonfowler.khaos.game.Team;
 import xyz.jadonfowler.khaos.listener.GameChooser;
+import xyz.jadonfowler.khaos.test.ExampleGame;
 
 public class Khaos extends JavaPlugin {
 
@@ -21,14 +22,19 @@ public class Khaos extends JavaPlugin {
     @Override public void onEnable() {
         instance = this;
         gameList = new ArrayList<Game>();
-        this.getLogger().info("Khaos started");
         Bukkit.getPluginManager().registerEvents(new GameChooser(), this);
+        this.getCommand("khaos").setExecutor(new KhaosCommandExecutor());
+        
+        // TODO Remove test game
+        ExampleGame exGame = new ExampleGame();
+        exGame.onEnable();
     }
 
     @Override public void onDisable() {
         for (Game g : gameList) {
             g.shutdown();
         }
+        getLogger().info("All games have been emptied.");
     }
 
     public boolean gameExists(String name) {

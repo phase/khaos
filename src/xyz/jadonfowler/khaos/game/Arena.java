@@ -25,7 +25,7 @@ public class Arena {
 
     @Getter private static Random random = new Random();
 
-    public Arena(GameRunnable gameRunnable, Location lobby) {
+    public Arena(GameRunnable gameRunnable) {
         this.state = ArenaState.PRE_GAME;
         this.teams = new ArrayList<Team>();
         this.maps = new ArrayList<Map>();
@@ -166,5 +166,9 @@ public class Arena {
         p.setFireTicks(0);
         p.getInventory().clear();
         p.getInventory().setArmorContents(null);
+    }
+
+    @Override public String toString() {
+        return "Arena(" + id + ")";
     }
 }

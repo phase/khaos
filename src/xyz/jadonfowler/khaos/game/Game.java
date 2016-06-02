@@ -18,6 +18,7 @@ public class Game {
         this.description = description;
         this.lobby = lobby;
         this.arenas = new ArrayList<Arena>();
+        Khaos.getInstance().getLogger().info("Game '" + name + "' created.");
     }
 
     public void addPlayer(Player p, int arenaId) {
@@ -43,7 +44,7 @@ public class Game {
             a.stop(true);
         Khaos.getInstance().getLogger().info("Game " + name + " has stopped.");
     }
-    
+
     public Arena getArena(int id) {
         return arenas.get(id - 1);
     }

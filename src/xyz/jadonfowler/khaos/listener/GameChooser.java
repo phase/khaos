@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,29 +21,31 @@ import xyz.jadonfowler.khaos.game.Game;
 
 public class GameChooser implements Listener {
 
-    @EventHandler public void EntityInteract(PlayerInteractEntityEvent e) {
+    @EventHandler public void entityInteract(PlayerInteractEntityEvent e) {
         Player p = e.getPlayer();
         Entity n = e.getRightClicked();
         if (!Khaos.getInstance().isInGame(p)) {
-            if (n.getWorld().getName().equalsIgnoreCase("world")) {
-                if (n instanceof LivingEntity) {
-                    LivingEntity en = (LivingEntity) n;
-                    String game = ChatColor.stripColor(en.getCustomName());
-                    if (Khaos.getInstance().gameExists(ChatColor.stripColor(game))) {
-                        openInventory(p, Khaos.getInstance().getGame(ChatColor.stripColor(game)));
-                        e.setCancelled(true);
-                    }
+            Khaos.getInstance().getLogger().info(p.getName() + " clicked " + n.getCustomName() + ".");
+            if (n.hasMetadata("khaos-game")) {
+                Khaos.getInstance().getLogger().info(n.getCustomName() + " has the correct metadata.");
+
+                String game = n.getMetadata("khaos-game").get(0).asString();
+                Khaos.getInstance().getLogger().info("Got game '" + game + "'.");
+                if (Khaos.getInstance().gameExists(ChatColor.stripColor(game))) {
+                    Khaos.getInstance().getLogger().info("Game '" + game + "' exists.");
+                    openInventory(p, Khaos.getInstance().getGame(ChatColor.stripColor(game)));
+                    e.setCancelled(true);
                 }
             }
         }
     }
 
-    @EventHandler public void ChooseGame(InventoryClickEvent e) {
+    @EventHandler public void chooseGame(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = (Player) e.getWhoClicked();
             if (Khaos.getInstance().isInGame(p)) return;
             String gameName = ChatColor.stripColor(e.getInventory().getName());
-            if (Khaos.getInstance().gameExists(gameName) ){
+            if (Khaos.getInstance().gameExists(gameName)) {
                 e.setCancelled(true);
                 String[] parts = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()).split(" ");
                 int id = Integer.parseInt(parts[parts.length - 1]);
@@ -58,11 +59,17 @@ public class GameChooser implements Listener {
     }
 
     public static void openInventory(Player p, Game g) {
-        Inventory i = Bukkit.createInventory(null, (g.getArenas().size() % 9) * 9,
+        // Khaos.getInstance().getLogger().info(g.getName() + "(" + p.getName()
+        // + "): ");
+
+        Inventory i = Bukkit.createInventory(p, (g.getArenas().size() % 9) * 9,
                 ChatColor.RED.toString() + ChatColor.BOLD + g.getName());
+        Khaos.getInstance().getLogger().info(g.getName() + "(" + p.getName() + "): Inventory=" + i.toString());
         int index = 0;
 
         for (Arena a : g.getArenas()) {
+            Khaos.getInstance().getLogger()
+                    .info(g.getName() + "(" + p.getName() + "): Inventory: Arena loop: Arena=" + a.toString());
             byte color = a.getState() == ArenaState.PRE_GAME ? (byte) 5 : (byte) 14;
             @SuppressWarnings("deprecation") ItemStack wool = new ItemStack(Material.WOOL, 1, (short) 0, color);
             ItemMeta woolMeta = wool.getItemMeta();

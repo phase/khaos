@@ -14,6 +14,10 @@ public class Team {
     @Getter private ChatColor color;
     @Getter private int maxPlayers;
 
+    public Team(String name, ChatColor color) {
+        this(name, color, -1);
+    }
+
     public Team(String name, ChatColor color, int maxPlayers) {
         this.name = name;
         this.color = color;

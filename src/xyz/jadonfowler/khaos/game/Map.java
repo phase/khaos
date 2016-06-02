@@ -6,21 +6,30 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import xyz.jadonfowler.khaos.Khaos;
 
-@RequiredArgsConstructor
 public class Map {
 
     @Getter String name;
-    @Getter String worldName;
     @Getter String creator;
+    @Getter String worldName;
     @Getter Location spectatorLobby;
-    @Getter boolean isLoaded = false;
-    @Getter HashMap<Team, Location> spawns = new HashMap<Team, Location>();
+    @Getter boolean isLoaded;
+    @Getter HashMap<Team, Location> spawns;
+
+    public Map(String name, String creator, String worldName, Location spectatorLobby) {
+        this.name = name;
+        this.creator = creator;
+        this.worldName = worldName;
+        this.spectatorLobby = spectatorLobby;
+        this.isLoaded = false;
+        this.spawns = new HashMap<Team, Location>();
+    }
 
     public void loadWorld() {
         if (isLoaded) unloadWorld();
         Bukkit.createWorld(new WorldCreator(worldName));
+        Khaos.getInstance().getLogger().info("World '" + worldName + "' was loaded.");
         isLoaded = true;
     }
 
@@ -31,6 +40,7 @@ public class Map {
     public void unloadWorld() {
         if (!isLoaded) return;
         Bukkit.unloadWorld(worldName, false);
+        Khaos.getInstance().getLogger().info("World '" + worldName + "' was unloaded.");
         isLoaded = false;
     }
 
