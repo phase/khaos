@@ -5,6 +5,8 @@ import lombok.Getter;
 
 public class TeamException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter Player player;
     @Getter Team team;
 
