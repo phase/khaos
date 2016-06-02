@@ -1,6 +1,7 @@
 package xyz.jadonfowler.khaos.game;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import lombok.Getter;
 import lombok.Setter;
+import xyz.jadonfowler.khaos.Khaos;
 
 public class Arena {
 
@@ -16,16 +18,17 @@ public class Arena {
     @Getter private ArrayList<Map> maps;
     @Getter private ArrayList<UUID> spectators;
 
-    @Getter int id;
+    @Getter @Setter int id = -1;
     @Getter @Setter GameRunnable gameRunnable;
+    @Getter @Setter Location lobby;
     @Getter Map currentMap;
-    @Getter Location lobby;
 
-    public Arena(int id, GameRunnable gameRunnable, Location lobby) {
+    @Getter private static Random random = new Random();
+
+    public Arena(GameRunnable gameRunnable, Location lobby) {
         this.state = ArenaState.PRE_GAME;
         this.teams = new ArrayList<Team>();
         this.maps = new ArrayList<Map>();
-        this.id = id;
         this.gameRunnable = gameRunnable;
     }
 
@@ -93,11 +96,51 @@ public class Arena {
     public void start() {
         if (state == ArenaState.PRE_GAME) {
             state = ArenaState.IN_GAME;
-            gameRunnable.onStart(this, currentMap);
+            currentMap = getRandomMap();
+            currentMap.loadWorld();
+            if (gameRunnable != null) gameRunnable.onStart(this, currentMap);
+
+            for (Team team : teams)
+                for (UUID u : team.getPlayers())
+                    Bukkit.getPlayer(u).teleport(currentMap.getSpawns().get(team));
         }
     }
 
-    public void stop() {
-        gameRunnable.onStop(this, currentMap, null);
+    public void stop(boolean forceStop) {
+        if (state == ArenaState.IN_GAME) {
+            gameRunnable.onStop(this, currentMap, null);
+            currentMap.unloadWorld();
+            if (forceStop) {
+                for (Team t : teams) {
+                    for (UUID u : t.getPlayers()) {
+                        Player p = Bukkit.getPlayer(u);
+                        p.teleport(Khaos.getInstance().getLobby());
+                        // p.kickPlayer("Thanks for playing!");
+                    }
+                }
+            }
+            else {
+                for (Team t : teams) {
+                    for (UUID u : t.getPlayers()) {
+                        Player p = Bukkit.getPlayer(u);
+                        p.setHealth(20d);
+                        p.setFoodLevel(20);
+                        p.setFireTicks(0);
+                        p.getInventory().clear();
+                        p.getInventory().setArmorContents(null);
+                        p.teleport(lobby);
+                    }
+                }
+            }
+        }
+    }
+
+    private Map getRandomMap() {
+        Map m = maps.get(random.nextInt(maps.size()));
+        if (m.isLoaded() // Map is already in use
+                || (m == currentMap && maps.size() != 1)) // We chose the
+                                                          // current map
+            return getRandomMap();
+        return m;
     }
 }
