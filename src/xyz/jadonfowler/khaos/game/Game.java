@@ -18,7 +18,6 @@ public class Game {
         this.description = description;
         this.lobby = lobby;
         this.arenas = new ArrayList<Arena>();
-        Khaos.getInstance().getLogger().info("Game '" + name + "' created.");
     }
 
     public void addPlayer(Player p, int arenaId) {

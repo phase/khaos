@@ -25,15 +25,10 @@ public class GameChooser implements Listener {
         Player p = e.getPlayer();
         Entity n = e.getRightClicked();
         if (!Khaos.getInstance().isInGame(p)) {
-            Khaos.getInstance().getLogger().info(p.getName() + " clicked " + n.getCustomName() + ".");
             if (n.hasMetadata("khaos-game")) {
-                Khaos.getInstance().getLogger().info(n.getCustomName() + " has the correct metadata.");
-
                 String game = n.getMetadata("khaos-game").get(0).asString();
-                Khaos.getInstance().getLogger().info("Got game '" + game + "'.");
-                if (Khaos.getInstance().gameExists(ChatColor.stripColor(game))) {
-                    Khaos.getInstance().getLogger().info("Game '" + game + "' exists.");
-                    openInventory(p, Khaos.getInstance().getGame(ChatColor.stripColor(game)));
+                if (Khaos.getInstance().gameExists(game)) {
+                    openInventory(p, Khaos.getInstance().getGame(game));
                     e.setCancelled(true);
                 }
             }
@@ -59,17 +54,11 @@ public class GameChooser implements Listener {
     }
 
     public static void openInventory(Player p, Game g) {
-        // Khaos.getInstance().getLogger().info(g.getName() + "(" + p.getName()
-        // + "): ");
-
         Inventory i = Bukkit.createInventory(p, (g.getArenas().size() % 9) * 9,
                 ChatColor.RED.toString() + ChatColor.BOLD + g.getName());
-        Khaos.getInstance().getLogger().info(g.getName() + "(" + p.getName() + "): Inventory=" + i.toString());
         int index = 0;
 
         for (Arena a : g.getArenas()) {
-            Khaos.getInstance().getLogger()
-                    .info(g.getName() + "(" + p.getName() + "): Inventory: Arena loop: Arena=" + a.toString());
             byte color = a.getState() == ArenaState.PRE_GAME ? (byte) 5 : (byte) 14;
             @SuppressWarnings("deprecation") ItemStack wool = new ItemStack(Material.WOOL, 1, (short) 0, color);
             ItemMeta woolMeta = wool.getItemMeta();

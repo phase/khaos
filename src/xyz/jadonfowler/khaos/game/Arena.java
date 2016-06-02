@@ -29,6 +29,7 @@ public class Arena {
         this.state = ArenaState.PRE_GAME;
         this.teams = new ArrayList<Team>();
         this.maps = new ArrayList<Map>();
+        this.spectators = new ArrayList<UUID>();
         this.gameRunnable = gameRunnable;
     }
 

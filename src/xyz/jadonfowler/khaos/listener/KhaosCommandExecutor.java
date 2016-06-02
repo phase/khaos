@@ -1,4 +1,4 @@
-package xyz.jadonfowler.khaos;
+package xyz.jadonfowler.khaos.listener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import xyz.jadonfowler.khaos.Khaos;
 
 public class KhaosCommandExecutor implements CommandExecutor {
 
@@ -31,11 +32,11 @@ public class KhaosCommandExecutor implements CommandExecutor {
                         if (type != null) {
                             Player p = (Player) sender;
                             Entity n = p.getWorld().spawnEntity(p.getLocation(), type);
-                            
+
                             n.setCustomName(ChatColor.BOLD + game);
                             n.setCustomNameVisible(true);
                             n.setMetadata("khaos-game", new FixedMetadataValue(Khaos.getInstance(), game));
-                            
+
                             Khaos.getInstance().getLogger()
                                     .info("Entity '" + mobName + "' created for game '" + game + "'.");
                             if (n instanceof LivingEntity) {
@@ -53,7 +54,10 @@ public class KhaosCommandExecutor implements CommandExecutor {
                     sender.sendMessage("You need to be a player to create entities.");
                 }
             }
-            return false;
+            else {
+                sender.sendMessage("Command not found.");
+            }
+            return true;
         }
         else {
             // TODO Display Help message for Ops

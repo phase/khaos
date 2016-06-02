@@ -56,6 +56,7 @@ public class ExampleGame {
 
         game.addArena(arena);
 
+        Khaos.getInstance().registerGame(game);
     }
 
 }
