@@ -43,11 +43,7 @@ public class Arena {
     }
 
     public void addPlayer(Player p) {
-        p.setHealth(20d);
-        p.setFoodLevel(20);
-        p.setFireTicks(0);
-        p.getInventory().clear();
-        p.getInventory().setArmorContents(null);
+        clearPlayer(p);
 
         if (state.equals(ArenaState.PRE_GAME)) {
             p.teleport(lobby);
@@ -98,11 +94,21 @@ public class Arena {
             state = ArenaState.IN_GAME;
             currentMap = getRandomMap();
             currentMap.loadWorld();
-            if (gameRunnable != null) gameRunnable.onStart(this, currentMap);
+            for (Team team : teams) {
+                for (UUID u : team.getPlayers()) {
+                    Player p = Bukkit.getPlayer(u);
+                    p.teleport(currentMap.getSpawns().get(team));
+                    p.setGameMode(GameMode.SURVIVAL);
+                    clearPlayer(p);
+                }
+            }
+            for (UUID u : spectators) {
+                Player p = Bukkit.getPlayer(u);
+                p.setGameMode(GameMode.CREATIVE);
+                clearPlayer(p);
+            }
 
-            for (Team team : teams)
-                for (UUID u : team.getPlayers())
-                    Bukkit.getPlayer(u).teleport(currentMap.getSpawns().get(team));
+            if (gameRunnable != null) gameRunnable.onStart(this, currentMap);
         }
     }
 
@@ -123,13 +129,16 @@ public class Arena {
                 for (Team t : teams) {
                     for (UUID u : t.getPlayers()) {
                         Player p = Bukkit.getPlayer(u);
-                        p.setHealth(20d);
-                        p.setFoodLevel(20);
-                        p.setFireTicks(0);
-                        p.getInventory().clear();
-                        p.getInventory().setArmorContents(null);
                         p.teleport(lobby);
+                        clearPlayer(p);
+                        p.setGameMode(GameMode.SURVIVAL);
                     }
+                }
+                for (UUID u : spectators) {
+                    Player p = Bukkit.getPlayer(u);
+                    p.teleport(lobby);
+                    clearPlayer(p);
+                    p.setGameMode(GameMode.SURVIVAL);
                 }
             }
         }
@@ -142,5 +151,13 @@ public class Arena {
                                                           // current map
             return getRandomMap();
         return m;
+    }
+
+    private void clearPlayer(Player p) {
+        p.setHealth(20d);
+        p.setFoodLevel(20);
+        p.setFireTicks(0);
+        p.getInventory().clear();
+        p.getInventory().setArmorContents(null);
     }
 }

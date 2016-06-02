@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import lombok.Getter;
+import xyz.jadonfowler.khaos.Khaos;
 
 public class Game {
 
@@ -40,5 +41,6 @@ public class Game {
     public void shutdown() {
         for (Arena a : arenas)
             a.stop(true);
+        Khaos.getInstance().getLogger().info("Game " + name + " has stopped.");
     }
 }

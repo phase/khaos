@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
     @Getter String name;
     @Getter String worldName;
     @Getter String creator;
-    @Getter boolean isLoaded;
+    @Getter Location spectatorLobby;
+    @Getter boolean isLoaded = false;
     @Getter HashMap<Team, Location> spawns = new HashMap<Team, Location>();
 
     public void loadWorld() {
@@ -31,24 +32,14 @@ import lombok.RequiredArgsConstructor;
         Bukkit.unloadWorld(worldName, false);
         isLoaded = false;
     }
-    
-    /**
-     * <b>MAY BE NULL! USE getWorldName()!</b>
-     * @return The World instance, may be <b>null</b>
-     */
-    public World getWorld(){
+
+    public World getWorld() {
         return Bukkit.getWorld(worldName);
     }
 
-    /** 
-     * Add spawn to HashMap
-     * @param team Team to add
-     * @param location Location of the Team's spawn
-     * @return Instance of Map for chaining
-     */
     public Map addSpawn(Team team, Location location) {
         spawns.put(team, location);
         return this;
     }
-    
+
 }

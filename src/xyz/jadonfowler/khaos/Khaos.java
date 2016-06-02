@@ -15,6 +15,7 @@ public class Khaos extends JavaPlugin {
     @Override public void onEnable() {
         instance = this;
         gameList = new ArrayList<Game>();
+        this.getLogger().info("Khaos started");
     }
 
     @Override public void onDisable() {
