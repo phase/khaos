@@ -8,7 +8,8 @@ import org.bukkit.WorldCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor public class Map {
+@RequiredArgsConstructor
+public class Map {
 
     @Getter String name;
     @Getter String worldName;

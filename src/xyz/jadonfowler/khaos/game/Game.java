@@ -43,4 +43,8 @@ public class Game {
             a.stop(true);
         Khaos.getInstance().getLogger().info("Game " + name + " has stopped.");
     }
+    
+    public Arena getArena(int id) {
+        return arenas.get(id - 1);
+    }
 }

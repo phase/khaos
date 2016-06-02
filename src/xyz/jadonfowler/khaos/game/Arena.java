@@ -42,6 +42,13 @@ public class Arena {
         return spectators.contains(u);
     }
 
+    public ArrayList<UUID> getPlayers() {
+        ArrayList<UUID> players = new ArrayList<UUID>();
+        for (Team t : teams)
+            players.addAll(t.getPlayers());
+        return players;
+    }
+
     public void addPlayer(Player p) {
         clearPlayer(p);
 
